@@ -49,6 +49,7 @@ test:
     - pytest_celery.vendors
   requires:
     - pip
+    - psutil >=7.0.0
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
