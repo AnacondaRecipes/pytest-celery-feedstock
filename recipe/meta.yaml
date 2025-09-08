@@ -12,7 +12,7 @@ source:
 build:
   number: 0
   # pytest-celery 1.2.1 unresolved on py3.13 due to docker-py<8 & urllib3<2
-  skip: true  # [py<=3.8 or py>=3.13]
+  skip: true  # [py<=3.8]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
 
 requirements:
@@ -38,7 +38,7 @@ requirements:
     #-- sqs
     - boto3 *
     - botocore *
-    - urllib3 >=1.26.16,<2.0
+    - urllib3 >=1.26.16
     #--
 
 test:
