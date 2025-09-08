@@ -49,10 +49,6 @@ test:
     - pytest_celery.vendors
   requires:
     - pip
-    - pytest
-    - psutil
-    - pytest-docker-tools
-    - celery
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
