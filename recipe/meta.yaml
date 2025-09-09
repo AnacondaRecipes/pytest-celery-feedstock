@@ -6,12 +6,17 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/pytest_celery-{{ version }}.tar.gz
-  sha256: 7873fb3cf4fbfe9b0dd15d359bdb8bbab4a41c7e48f5b0adb7d36138d3704d52
+  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace("-", "_") }}-{{ version }}.tar.gz
+    sha256: 7873fb3cf4fbfe9b0dd15d359bdb8bbab4a41c7e48f5b0adb7d36138d3704d52
+
+    # tests and tests data files
+  - url: https://github.com/celery/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+    sha256: 1fda701c4683ba8fa5d404794b0dd141c95478ed71e9abe0d38da3f60d74ea49
+    folder: gh_src
 
 build:
   number: 0
-  skip: true  # [py<=3.8]
+  skip: true  # [py<38]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
 
 requirements:
@@ -40,6 +45,8 @@ requirements:
     #--
 
 test:
+  source_files:
+    - gh_src/tests
   imports:
     - pytest_celery
     - pytest_celery.api
@@ -48,9 +55,22 @@ test:
     - pytest_celery.vendors
   requires:
     - pip
+    - pytest
+    - redis-py
+    - python-memcached
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - >
+      python -c "open('pytest.ini','w').write(
+      '[pytest]\n'
+      'pythonpath = gh_src\n'
+      'python_classes = test*\n'
+      'python_files = test_*.py\n'
+      'python_functions = test_*\n'
+      'testpaths = gh_src/tests/unit\n'
+      )"
+    - python -m pytest -ra -vv
 
 about:
   home: https://github.com/celery/pytest-celery
