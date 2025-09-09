@@ -9,7 +9,7 @@ source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace("-", "_") }}-{{ version }}.tar.gz
     sha256: 7873fb3cf4fbfe9b0dd15d359bdb8bbab4a41c7e48f5b0adb7d36138d3704d52
 
-    # tests and tests data files
+    # tests from github source
   - url: https://github.com/celery/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
     sha256: 1fda701c4683ba8fa5d404794b0dd141c95478ed71e9abe0d38da3f60d74ea49
     folder: gh_src
@@ -74,7 +74,6 @@ test:
 
 about:
   home: https://github.com/celery/pytest-celery
-  summary: Pytest plugin for Celery
   license: BSD-3-Clause
   license_file: LICENSE
   license_family: Other
