@@ -1,42 +1,88 @@
 {% set name = "pytest-celery" %}
-{% set version = "0.0.0a1" %}
+{% set version = "1.2.1" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/pytest-celery-{{ version }}.tar.gz
-  sha256: 3e0e0817c2d3f2870dafebd915bf13100fc12920b5d42dfe5fdc35844fe42e62
+  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace("-", "_") }}-{{ version }}.tar.gz
+    sha256: 7873fb3cf4fbfe9b0dd15d359bdb8bbab4a41c7e48f5b0adb7d36138d3704d52
+
+    # tests from github source
+  - url: https://github.com/celery/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+    sha256: 1fda701c4683ba8fa5d404794b0dd141c95478ed71e9abe0d38da3f60d74ea49
+    folder: gh_src
 
 build:
-  number: 1
-  noarch: python
-  script: {{ PYTHON }} -m pip install . -vv
+  number: 0
+  skip: true  # [py<38]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
 
 requirements:
   host:
-    - pip
-    - flit
     - python
+    - poetry-core >=1.8.1
+    - pip
   run:
-    - pytest
+    - python
+    - celery
+    - kombu
+    - tenacity >=9.0.0
+    - pytest-docker-tools >=3.1.3
+    - docker-py >=7.1.0,<8.0.0
+    - psutil >=7.0.0
+    - setuptools >=60.0.0,<75.0.0  # [py>=38 and py<39]
+    - setuptools >=75.8.0  # [py>=39 and py<4]
+    - debugpy >=1.8.12,<2.0.0
+  run_constrained:
+    - redis-py *
+    - python-memcached *
+    #-- sqs
+    - boto3 *
+    - botocore *
+    #--
 
 test:
+  source_files:
+    - gh_src/tests
   imports:
     - pytest_celery
-  commands:
-    - pip check
-    - "pytest --fixtures | grep 'plugins: celery'"
+    - pytest_celery.api
+    - pytest_celery.defaults
+    - pytest_celery.fixtures
+    - pytest_celery.vendors
   requires:
     - pip
-    - celery >=4.4.0
-    
+    - pytest
+    - redis-py
+    - python-memcached
+  commands:
+    - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - >
+      python -c "open('pytest.ini','w').write(
+      '[pytest]\n'
+      'pythonpath = gh_src\n'
+      'python_classes = test*\n'
+      'python_files = test_*.py\n'
+      'python_functions = test_*\n'
+      'testpaths = gh_src/tests/unit\n'
+      )"
+    - python -m pytest -ra -vv
+
 about:
-  home: https://github.com/graingert/pytest-celery
-  summary: pytest-celery a shim pytest plugin to enable celery.contrib.pytest
+  home: https://github.com/celery/pytest-celery
   license: BSD-3-Clause
   license_file: LICENSE
+  license_family: Other
+  summary: Pytest plugin for Celery
+  description: |
+     It is pytest plugin designed for Celery application developers.
+     It enables dynamic orchestration of Celery environments for testing tasks
+     in isolated conditions, leveraging Docker & pytest-docker-tools for environment simulation.
+  dev_url: https://github.com/celery/pytest-celery
+  doc_url: https://docs.celeryq.dev/projects/pytest-celery
 
 extra:
   recipe-maintainers:
