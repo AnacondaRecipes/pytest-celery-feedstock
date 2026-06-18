@@ -39,7 +39,6 @@ requirements:
     - boto3 *
     - botocore *
     #--
-    - pycurl >=7.43  # [unix]
 
 test:
   source_files:
