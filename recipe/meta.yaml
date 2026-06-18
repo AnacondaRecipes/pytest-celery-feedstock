@@ -8,7 +8,6 @@ package:
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace("-", "_") }}-{{ version }}.tar.gz
     sha256: bd9e5b0f594ec5de9ab97cf27e3a11c644718a761bab6b997d01800fd7394f64
-
     # tests from github source
   - url: https://github.com/celery/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
     sha256: b2d797fd5fe557fc070509683ca8caa06c5bca6eafb4367d96496f0f84db0f04
@@ -41,7 +40,6 @@ requirements:
     - botocore *
     #--
     - pycurl >=7.43  # [unix]
-    - urllib3 >=1.26.16,<2.0
 
 test:
   source_files:
