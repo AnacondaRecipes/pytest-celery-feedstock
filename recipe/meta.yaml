@@ -75,7 +75,7 @@ about:
   license_family: Other
   summary: Pytest plugin for Celery
   description: |
-     It is pytest plugin designed for Celery application developers.
+     It is a pytest plugin designed for Celery application developers.
      It enables dynamic orchestration of Celery environments for testing tasks
      in isolated conditions, leveraging Docker & pytest-docker-tools for environment simulation.
   dev_url: https://github.com/celery/pytest-celery
